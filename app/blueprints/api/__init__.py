@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-bp = Blueprint('api', __name__, url_prefix='/api')
+bp = Blueprint('interface', __name__, url_prefix='/interface')
 
 from . import routes, models
