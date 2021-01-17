@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <form action="{{ url_for('database.edit_user') }}" id="edit_user_form">
+        <div>
+            <h5>Edit User: {{ selected_user.title }}</h5>
+        </div>
+        <div class="form-group">
+            <label for="edited_username">Username</label>
+            <input type="text" class="form-control" id="edited_username" name="edited_username" value="{{ selected_user.username }}" />
+        </div>
+        <div class="form-group">
+            <label for="edited_password">Password</label>
+            <input type="text" class="form-control" id="edited_password" name="edited_password" value="{{ selected_user.password }}" />
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="edited_role">Roles</label>
+            </div>
+            <select class="custom-select" id="edited_role" name="edited_role">
+                {% for role in roles %}
+                    <option value="{{ role.id }}">{{ role.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <p>Delete User?</p>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="delete" id="delete_yes" value="yes">
+                <label class="form-check-label" for="delete_yes">
+                    Yes
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="delete" id="delete_no" value="no" checked>
+                <label class="form-check-label" for="delete_no">
+                    No
+                </label>
+            </div>
+        </div>
+        <input type="hidden" id="user_id" name="user_id" value="{{ selected_user.id }}" />
+        <button type="submit" class="btn btn-primary">Edit User</button>
+    </form>
+</div>
+{% endblock content %}

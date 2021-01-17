@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+<h5 class="page_title">Alexander Blair's Portfolio Database</h5>
+</div>
+
+<div class="row">
+    <form action="{{ url_for('database.create_role') }}">
+        <div>
+            <h5>Create New Role</h5>
+        </div>
+        <div class="form-group">
+            <label for="role_name">Role Name</label>
+            <input type="text" class="form-control" id="role_name" name="role_name" placeholder="Administrator, User, Guest, etc." />
+        </div>
+        <button type="submit" class="btn btn-primary">Create Role</button>
+    </form>
+</div>
+<hr />
+
+<div class="row">
+    <form action="{{ url_for('database.create_user') }}">
+        <div>
+            <h5>Create New User</h5>
+        </div>
+        <div class="form-group">
+            <label for="role_name">Username</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Username" />
+        </div>
+        <div class="form-group">
+            <label for="role_name">Password</label>
+            <input type="password" class="form-control" id="password" name="password" />
+        </div>
+        <div class="form-group">
+            <label for="role_name">Email</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="person@email.com" />
+        </div>
+        <div class="form-group">
+            <label for="role_name">Role ID</label>
+            <input type="text" class="form-control" id="role_id" name="role_id" placeholder="4, 5, 6" />
+        </div>
+        <button type="submit" class="btn btn-primary">Create User</button>
+    </form>
+</div>
+<hr />
+
+<div class="row">
+    <form action="{{ url_for('database.create_project') }}">
+        <div>
+            <h5>Create New Project</h5>
+        </div>
+        <div class="form-group">
+            <label for="role_name">Name</label>
+            <input type="text" class="form-control" id="project_name" name="project_name" placeholder="Project Name" />
+        </div>
+        <div class="form-group">
+            <label for="role_name">Description</label>
+            <input type="text-area" class="form-control" id="project_description" name="project_description" placeholder="Project Description" />
+        </div>
+        <div class="form-group">
+            <label for="role_name">GitHub</label>
+            <input type="text" class="form-control" id="project_github" name="project_github" placeholder="GitHub Repository" />
+        </div>
+        <button type="submit" class="btn btn-primary">Create Project</button>
+    </form>
+</div>
+<hr />
+
+<div class="row">
+    <form action="{{ url_for('database.create_blogpost') }}">
+        <div>
+            <h5>Create New Blog Post</h5>
+        </div>
+        <div class="form-group">
+            <label for="role_name">Title</label>
+            <input type="text" class="form-control" id="blogpost_title" name="blogpost_title" placeholder="Blog Post Title" />
+        </div>
+        <div class="form-group">
+            <label for="role_name">Content</label>
+            <input type="text-area" class="form-control" id="blogpost_content" name="blogpost_content" placeholder="Blog Post Content" />
+        </div>
+        <div class="form-group">
+            <label for="role_name">Author ID</label>
+            <input type="text" class="form-control" id="blogpost_author" name="blogpost_author" placeholder="Author ID" />
+        </div>
+        <button type="submit" class="btn btn-primary">Create Blog Post</button>
+    </form>
+</div>
+<hr />
+
+<div class="row">
+    <form action="{{ url_for('database.create_tag') }}">
+        <div>
+            <h5>Create New Tag</h5>
+        </div>
+        <div class="form-group">
+            <label for="tag_name">Tag Name</label>
+            <input type="text" class="form-control" id="tag_name" name="tag_name" placeholder="Python, JavaScript, Flask, etc." />
+        </div>
+        <button type="submit" class="btn btn-primary">Create Tag</button>
+    </form>
+</div>
+<hr />
+{% endblock content %}

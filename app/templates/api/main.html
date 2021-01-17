@@ -1,6 +1,89 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h5 class="page_title">Alexander Blair's Portfolio API</h5>
-<p>This is the API for Alexander Blair's Portfolio</p>
+<div class="row">
+    <h5 class="page_title">Alexander Blair's Portfolio API Docs and Requests</h5>
+</div>
+<div class="row">
+    <div>
+        <h5>Request Alls</h5>
+    </div>
+    <ul>
+        <a href="{{ url_for('api.all_users') }}">
+            <li>
+                Users
+            </li>
+        </a>
+    </ul>
+</div>
+
+<div class="row">
+    <div>
+        <h5>Single Entities</h5>
+    </div>
+    <form action="{{ url_for('api.single_user') }}">
+        <div>
+            <h5>User</h5>
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="user_id">Users</label>
+            </div>
+            <select class="custom-select" id="user_id" name="user_id">
+                {% for user in users %}
+                    <option value="{{ user.id }}">{{ user.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Select User</button>
+    </form>
+    <form action="{{ url_for('api.single_blogpost') }}">
+        <div>
+            <h5>Blog Posts</h5>
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="blogpost_id">Posts</label>
+            </div>
+            <select class="custom-select" id="blogpost_id" name="blogpost_id">
+                {% for blogpost in blogposts %}
+                    <option value="{{ blogpost.id }}">{{ blogpost.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Select Post</button>
+    </form>
+    <form action="{{ url_for('api.single_project') }}">
+        <div>
+            <h5>Projects</h5>
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="project_id">Projects</label>
+            </div>
+            <select class="custom-select" id="project_id" name="project_id">
+                {% for project in projects %}
+                    <option value="{{ project.id }}">{{ project.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Select Project</button>
+    </form>
+    <form action="{{ url_for('api.single_tag') }}">
+        <div>
+            <h5>Tags</h5>
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="tag_id">Tags</label>
+            </div>
+            <select class="custom-select" id="tag_id" name="tag_id">
+                {% for tag in tags %}
+                    <option value="{{ tag.id }}">{{ tag.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Select Tag</button>
+    </form>
+</div>
 {% endblock content %}
