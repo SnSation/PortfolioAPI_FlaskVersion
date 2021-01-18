@@ -27,11 +27,14 @@ def single_user():
 @api.route('/all_blogposts', methods=['GET'])
 def all_blogposts():
     all_blogposts = [blogpost.to_dict() for blogpost in BlogPost.query.all()]
+    for blogpost in all_blogposts:
+        blogpost['author'] = User.query.get(blogpost['author']).username
     return jsonify(all_blogposts)
 
 @api.route('/single_blogpost', methods=['GET'])
 def single_blogpost():
     this_blogpost = BlogPost.query.get(request.args.get('blogpost_id')).to_dict()
+    this_blogpost['author'] = User.query.get(this_blogpost['author']).username
     return jsonify(this_blogpost)
 
 @api.route('/all_projects', methods=['GET'])

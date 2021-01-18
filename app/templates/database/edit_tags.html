@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <form action="{{ url_for('database.change_tags') }}" id="edit_tags_form">
+
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="selection_options">{{ selection_type }}</label>
+            </div>
+            <select class="custom-select" id="selection_options" name="object_id">
+                {% if selection_type == "project" %}
+                    {% for option in selection_options %}
+                        <option value="{{ option.id }}">{{ option.name }}</option>
+                    {% endfor %}
+                {% endif %}
+                {% if selection_type == 'blogpost' %}
+                    {% for option in selection_options %}
+                        <option value="{{ option.id }}">{{ option.title }}</option>
+                    {% endfor %}
+                {% endif %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="edited_tags">Tags</label>
+            <textarea class="form-control" id="edited_tags" name="new_tags" rows="4" placeholder="Tags separated by commas"></textarea>
+        </div>
+
+        <input type="hidden" id="object_type" name="object_type" value="{{ selection_type }}" />
+        <button type="submit" class="btn btn-primary">Edit Tags</button>
+    </form>
+</div>
+{% endblock content %}

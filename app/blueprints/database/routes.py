@@ -183,3 +183,45 @@ def edit_project():
         this_project.set_attributes(new_data)
         this_project.update_in_database()
         return f'Project - {this_project.name} - Edited'
+
+@database.route('/change_tags', methods=['GET'])
+def change_tags():
+    tag_arguments = request.args.get('new_tags').lower().split(', ')
+    tag_list = []
+    for tag_name in tag_arguments:
+        if Tag.query.filter_by(name=tag_name).first() == None:
+            new_tag = Tag()
+            tag_data = {
+                'name': tag_name
+            }
+            new_tag.set_attributes(tag_data)
+            new_tag.new_to_database()
+            tag_list.append(Tag.query.filter_by(name=tag_name).first())
+        else:
+            tag_list.append(Tag.query.filter_by(name=tag_name).first())
+    if request.args.get('object_type') == 'project':
+        this_object = Project.query.get(request.args.get('object_id'))
+        this_object.tags = tag_list
+        db.session.commit()
+    elif request.args.get('object_type') == 'blogpost':
+        this_object = BlogPost.query.get(request.args.get('object_id'))
+        this_object.tags = tag_list
+        db.session.commit()
+    return redirect(url_for('database.main'))
+
+@database.route('/edit_tags', methods=['GET', 'POST'])
+def edit_tags():
+    selection_list = []
+    selection_type = ''
+    if request.args.get('object_type') == 'project':
+        selection_type = "project"
+        selection_list = Project.query.all()
+    elif request.args.get('object_type') == 'blogpost':
+        selection_type = "blogpost"
+        selection_list = BlogPost.query.all()
+    context = {
+        'selection_type':selection_type,
+        'selection_options':selection_list,
+        'selection_tags':[]
+    }
+    return render_template('database/edit_tags.html', **context)
