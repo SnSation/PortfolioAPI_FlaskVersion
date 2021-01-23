@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <h5 class="page_title">Edit Entities</h5>
+</div>
+
+<div class="row">
+    <form action="{{ url_for('database.edit_page_form') }}">
+        <div>
+            <h5>Edit Page</h5>
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="page_id">Pages</label>
+            </div>
+            <select class="custom-select" id="page_id" name="page_id">
+                {% for page in pages %}
+                    <option value="{{ page.id }}">{{ page.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Select Page</button>
+    </form>
+    <form action="{{ url_for('database.edit_page_category_form') }}">
+        <div>
+            <h5>Edit Page</h5>
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="category_id">Categories</label>
+            </div>
+            <select class="custom-select" id="category_id" name="category_id">
+                {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Select Category</button>
+    </form>
+    <form action="{{ url_for('database.edit_page_component_form') }}">
+        <div>
+            <h5>Edit Component</h5>
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="component_id">Components</label>
+            </div>
+            <select class="custom-select" id="component_id" name="component_id">
+                {% for component in components %}
+                    <option value="{{ component.id }}">{{ component.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Select Component</button>
+    </form>
+    <form action="{{ url_for('database.edit_component_element_form') }}">
+        <div>
+            <h5>Edit Element</h5>
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="element_id">Elements</label>
+            </div>
+            <select class="custom-select" id="element_id" name="element_id">
+                {% for element in elements %}
+                    <option value="{{ element.id }}">{{ element.name }} ({{ element.element_type }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Select Element</button>
+    </form>
+</div>
+{% endblock content %}

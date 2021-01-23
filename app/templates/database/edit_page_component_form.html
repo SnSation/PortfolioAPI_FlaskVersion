@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <form action="{{ url_for('database.edit_page_component') }}" id="edit_component_form">
+        <div>
+            <h5>Edit Component: {{ component.name }}</h5>
+        </div>
+        <div class="form-group">
+            <label for="component_name">Name</label>
+            <input type="text" class="form-control" id="component_name" name="component_name" value="{{ component.name }}" />
+        </div>
+        <div class="form-group">
+            <label for="component_category">Type</label>
+            <input type="text" class="form-control" id="component_component_type" name="component_component_type" value="{{ component.component_type }}" />
+        </div>
+        <div class="form-group">
+            <label for="component_components">Elements</label>
+            <input type="text" class="form-control" id="component_elements" name="component_elements" value="{% for element in component.elements %}{{ element.name }}, {% endfor %}" />
+        </div>
+        
+        <input type="hidden" id="component_id" name="component_id" value="{{ component.id }}" />
+        <button type="submit" class="btn btn-primary">Edit Component</button>
+    </form>
+</div>
+{% endblock content %}

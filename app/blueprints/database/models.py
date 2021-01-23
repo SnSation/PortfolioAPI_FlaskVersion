@@ -237,7 +237,10 @@ class Page(db.Model):
     last_edit = db.Column(db.DateTime, default=dt.utcnow)
     name = db.Column(db.String(50), unique=True)
     category = db.Column(db.Integer, db.ForeignKey('page_category.id'), default=1)
-    components = db.relationship('PageComponent', secondary=page_component_associations, backref=db.backref('pages', lazy='dynamic'))
+    components = db.relationship(
+        'PageComponent',
+        secondary=page_component_associations,
+        backref=db.backref('pages', lazy='dynamic', cascade="all, delete"))
 
     def __repr__(self):
         return f'<Page | ID: {self.id} | Name: {self.name}>'
@@ -348,6 +351,9 @@ class PageComponent(db.Model):
         db.session.delete(self)
         db.session.commit()
 
+    def update_in_database(self):
+        db.session.commit()
+        
 class ComponentElement(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     created_on = db.Column(db.DateTime, default=dt.utcnow)

@@ -246,6 +246,7 @@ def v2_edit_entities():
     }
     return render_template('database/v2_edit_entities.html', **context)
 
+
 # End: Entity Selection
 
 ####################
@@ -292,7 +293,7 @@ def create_page():
 @database.route('/edit_page_form', methods=['GET', 'POST'])
 def edit_page_form():
     context = {
-        'pages':Page.query.all()
+        'page':Page.query.get(request.args.get('page_id'))
     }
 
     return render_template('database/edit_page_form.html', **context)
@@ -300,6 +301,13 @@ def edit_page_form():
 @database.route('/edit_page', methods=['GET'])
 def edit_page():
     this_page = Page.query.get(request.args.get('page_id'))
+
+    # # Delete?
+    # if request.args.get('delete') == 'yes':
+    #     this_page.remove_from_database()
+    #     return f'{this_page.name} deleted from database'
+
+    # Edit?
     page_name = this_page.name
     page_category = this_page.category
 
@@ -360,13 +368,13 @@ def create_page_category():
 @database.route('edit_page_category_form', methods=['GET', 'POST'])
 def edit_page_category_form():
     context = {
-        'categories': PageCategory.query.all()
+        'category': PageCategory.query.get(request.args.get('category_id'))
     }
     return render_template('database/edit_page_category_form.html', **context)
 
 @database.route('/edit_page_category', methods=['GET'])
 def edit_page_category():
-    this_category = PageCategory.query.filter_by(name=request.args.get('category_id'))
+    this_category = PageCategory.query.get(request.args.get('category_id'))
     category_name = this_category.name
 
     if len(request.args.get('category_name')) > 0:
@@ -424,13 +432,13 @@ def create_page_component():
 @database.route('/edit_page_component_form', methods=['GET', 'POST'])
 def edit_page_component_form():
     context = {
-        'components':PageComponent.query.all()
+        'component':PageComponent.query.get(request.args.get('component_id'))
     }
     return render_template('database/edit_page_component_form.html', **context)
     
 @database.route('/edit_page_component', methods=['GET', 'POST'])
 def edit_page_component():
-    this_component = PageComponent.query.get('component_id')
+    this_component = PageComponent.query.get(request.args.get('component_id'))
     component_name = this_component.name
 
     if len(request.args.get('component_name')) > 0:
@@ -445,13 +453,17 @@ def edit_page_component():
 
     if len(request.args.get('component_elements')) > 0:
         elements = request.args.get('component_elements').split(', ')
+        new_elements = []
         for element in elements:
             try:
-                this_element = ComponentElement.query.filter_by(name=element)
-                this_component.elements.append(this_element)
+                this_element = ComponentElement.query.filter_by(name=element).first()
+                if this_element != None:
+                    new_elements.append(this_element)
             except:
                 print(f'Element Not Found: {element}')
                 continue
+        print(new_elements)
+        this_component.elements = new_elements
                 
     this_component.update_in_database()
 
@@ -488,9 +500,9 @@ def create_component_element():
 @database.route('/edit_component_element_form', methods=['GET'])
 def edit_component_element_form():
     context = {
-        'elements':ComponentElement.query.all()
+        'element':ComponentElement.query.get(request.args.get('element_id'))
     }
-    return render_template('database/edit_component_element_form', **context)
+    return render_template('database/edit_component_element_form.html', **context)
 
 @database.route('/edit_component_element', methods=['GET'])
 def edit_component_element():
@@ -504,7 +516,7 @@ def edit_component_element():
     if len(request.args.get('element_content')) > 0:
         element_content = request.args.get('element_content')
     if len(request.args.get('element_type')) > 0:
-        element_type = request.args.get('element_content')
+        element_type = request.args.get('element_type')
 
     element_data = {
         'name':element_name,
