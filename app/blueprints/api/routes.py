@@ -2,7 +2,7 @@ from . import bp as api
 from flask import render_template, redirect, url_for, jsonify, request
 import requests
 from app import db
-from app.blueprints.database.models import User, Role, Project, BlogPost, Tag
+from app.blueprints.database.models import User, Role, Project, BlogPost, Tag, Page, PageCategory, PageComponent, ComponentElement
 
 @api.route('/', methods=['GET'])
 def main():
@@ -56,3 +56,19 @@ def all_tags():
 def single_tag():
     this_tag = Tag.query.get(request.args.get('tag_id')).to_dict()
     return jsonify(this_tag)
+
+###################
+## Site API V0.2 ##
+###################
+
+# Page Routes
+
+# All Pages
+@api.route('/all_pages', methods=['GET'])
+def all_pages():
+    return jsonify([page.to_dict() for page in Page.query.all()])
+
+# Single Page
+@api.route('/get_page', methods=['GET'])
+def get_page():
+    return jsonify(Page.query.get(request.args.get('page_id')).to_dict())

@@ -2,7 +2,7 @@ from . import bp as database
 from flask import render_template, redirect, url_for, jsonify, request
 import requests
 from app import db
-from .models import User, Role, Project, BlogPost, Tag
+from .models import User, Role, Project, BlogPost, Tag, Page, PageCategory, PageComponent, ComponentElement
 from datetime import datetime as dt
 
 @database.route('/', methods=['GET'])
@@ -225,3 +225,297 @@ def edit_tags():
         'selection_tags':[]
     }
     return render_template('database/edit_tags.html', **context)
+
+###################
+## Site API V0.2 ##
+###################
+
+# Start: Entity Selection
+
+@database.route('/v2_new_entities', methods=['GET', 'POST'])
+def v2_new_entities():
+    return render_template('database/v2_new_entities.html')
+
+@database.route('/v2_edit_entities', methods=['GET', 'POST'])
+def v2_edit_entities():
+    context = {
+        'pages':Page.query.all(),
+        'categories':PageCategory.query.all(),
+        'components':PageComponent.query.all(),
+        'elements':ComponentElement.query.all()
+    }
+    return render_template('database/v2_edit_entities.html', **context)
+
+# End: Entity Selection
+
+####################
+
+# Start: Page Routes
+
+# @database.route('/create_page_form', methods=['GET', 'POST'])
+# def create_page_form():
+#     return render_template('database/create_page_form.html')
+
+@database.route('/create_page', methods=['GET'])
+def create_page():
+    page_name = request.args.get('page_name')
+
+    page_data = {
+        'name':page_name,
+    }
+
+    if len(request.args.get('page_category')) > 0:
+        this_category = PageCategory.query.filter_by(name=request.args.get('page_category')).first()
+        page_data['page_category'] = this_category.id
+
+    new_page = Page()
+    new_page.set_attributes(page_data)
+    new_page.new_to_database()
+    this_page = Page.query.filter_by(name=new_page.name).first()
+
+    page_components = []
+    if len(request.args.get('page_components')) > 0:
+        page_components = request.args.get('page_components').split(', ')
+
+    for component in page_components:
+        print(PageComponent.query.filter_by(name=component).first())
+        try:
+            this_component = PageComponent.query.filter_by(name=component).first()
+            this_page.components.append(this_component)
+            db.session.commit()
+        except:
+            print(f'Component Not Found: {component}')
+            continue
+    
+    return jsonify(Page.query.filter_by(name=this_page.name).first().to_dict())
+
+@database.route('/edit_page_form', methods=['GET', 'POST'])
+def edit_page_form():
+    context = {
+        'pages':Page.query.all()
+    }
+
+    return render_template('database/edit_page_form.html', **context)
+
+@database.route('/edit_page', methods=['GET'])
+def edit_page():
+    this_page = Page.query.get(request.args.get('page_id'))
+    page_name = this_page.name
+    page_category = this_page.category
+
+    if len(request.args.get('page_name')) > 0:
+        page_name = request.args.get('page_name')
+
+    if len(request.args.get('page_category')) > 0:
+        page_category = request.args.get('page_category')
+
+    page_data = {
+        'name':page_name,
+        'category':page_category,
+        'last_edit':dt.utcnow()
+    }
+
+    this_page.set_attributes(page_data)
+
+    if len(request.args.get('page_components')) > 0:
+        components = request.args.get('page_components').split(', ')
+        for component in components:
+            try:
+                this_component = PageComponent.query.filter_by(name=component).first()
+                this_page.components.append(this_component)
+            except:
+                print(f'Component Not Found: {component}')
+                continue
+
+    this_page.update_in_database()
+
+    return jsonify(Page.query.filter_by(name=this_page.name).first().to_dict())
+
+# End: Page Routes
+
+####################
+
+# Start: Page Category Routes
+
+# @database.route('/create_page_category_form', methods=['GET', 'POST'])
+# def create_page_category_form():
+#     return render_template('database/create_page_category_form.html')
+
+@database.route('/create_page_category', methods=['GET'])
+def create_page_category():
+    category_name = request.args.get('category_name')
+
+    category_data = {
+        'name':category_name
+    }
+
+    new_category = PageCategory()
+    new_category.set_attributes(category_data)
+    new_category.new_to_database()
+
+    this_category = PageCategory.query.filter_by(name=new_category.name).first()
+
+    return jsonify(this_category.to_dict())
+
+@database.route('edit_page_category_form', methods=['GET', 'POST'])
+def edit_page_category_form():
+    context = {
+        'categories': PageCategory.query.all()
+    }
+    return render_template('database/edit_page_category_form.html', **context)
+
+@database.route('/edit_page_category', methods=['GET'])
+def edit_page_category():
+    this_category = PageCategory.query.filter_by(name=request.args.get('category_id'))
+    category_name = this_category.name
+
+    if len(request.args.get('category_name')) > 0:
+        category_name = request.args.get('category_name')
+
+    category_data = {
+        'name':category_name,
+        'last_edit':dt.utcnow()
+    }
+
+    this_category.set_attributes(category_data)
+    this_category.update_in_database()
+
+    return jsonify(PageCategory.query.filter_by(name=this_category.name).first().to_dict())
+
+# End: Page Category Routes
+
+####################
+
+# Start: Page Component Routes
+
+# @database.route('/create_page_component_form', methods=['GET', 'POST'])
+# def create_page_component_form():
+#     return render_template('database/create_page_component_form.html')
+
+@database.route('/create_page_component', methods=['GET'])
+def create_page_component():
+    component_name = request.args.get('component_name')
+    component_type = request.args.get('component_type')
+    
+    component_data = {
+        'name':component_name,
+        'component_type':component_type
+    }
+
+    new_component = PageComponent()
+    new_component.set_attributes(component_data)
+    new_component.new_to_database()
+
+    this_component = PageComponent.query.filter_by(name=new_component.name).first()
+
+    if len(request.args.get('component_elements')) > 0:
+        elements = request.args.get('component_elements').split(', ')
+        for element in elements:
+            try:
+                this_element = ComponentElement.query.filter_by(name=element).first()
+                this_component.elements.append(this_element)
+                db.session.commit()
+            except:
+                print(f'Element Not Found: {element}')
+                continue
+    
+    return jsonify(PageComponent.query.filter_by(name=this_component.name).first().to_dict())
+
+@database.route('/edit_page_component_form', methods=['GET', 'POST'])
+def edit_page_component_form():
+    context = {
+        'components':PageComponent.query.all()
+    }
+    return render_template('database/edit_page_component_form.html', **context)
+    
+@database.route('/edit_page_component', methods=['GET', 'POST'])
+def edit_page_component():
+    this_component = PageComponent.query.get('component_id')
+    component_name = this_component.name
+
+    if len(request.args.get('component_name')) > 0:
+        component_name = request.args.get('component_name')
+
+    component_data = {
+        'name':component_name,
+        'last_edit':dt.utcnow()
+    }
+
+    this_component.set_attributes(component_data)
+
+    if len(request.args.get('component_elements')) > 0:
+        elements = request.args.get('component_elements').split(', ')
+        for element in elements:
+            try:
+                this_element = ComponentElement.query.filter_by(name=element)
+                this_component.elements.append(this_element)
+            except:
+                print(f'Element Not Found: {element}')
+                continue
+                
+    this_component.update_in_database()
+
+    return jsonify(PageComponent.query.filter_by(name=this_component.name).first().to_dict())
+
+# End: Page Component Routes
+
+####################
+
+# Start: Component Element Routes
+
+# @database.route('/create_component_element_form', methods=['GET', 'POST'])
+# def create_component_element_form():
+#     return render_template('database/create_component_element_form.html')
+
+@database.route('/create_component_element', methods=['GET'])
+def create_component_element():
+    element_name = request.args.get('element_name')
+    element_content = request.args.get('element_content')
+    element_type = request.args.get('element_type')
+
+    element_data = {
+        'name':element_name,
+        'content':element_content,
+        'element_type':element_type
+    }
+
+    new_element = ComponentElement()
+    new_element.set_attributes(element_data)
+    new_element.new_to_database()
+
+    return jsonify(ComponentElement.query.filter_by(name=new_element.name).first().to_dict())
+
+@database.route('/edit_component_element_form', methods=['GET'])
+def edit_component_element_form():
+    context = {
+        'elements':ComponentElement.query.all()
+    }
+    return render_template('database/edit_component_element_form', **context)
+
+@database.route('/edit_component_element', methods=['GET'])
+def edit_component_element():
+    this_element = ComponentElement.query.get(request.args.get('element_id'))
+    element_name = this_element.name
+    element_content = this_element.content
+    element_type = this_element.element_type
+
+    if len(request.args.get('element_name')) > 0:
+        element_name = request.args.get('element_name')
+    if len(request.args.get('element_content')) > 0:
+        element_content = request.args.get('element_content')
+    if len(request.args.get('element_type')) > 0:
+        element_type = request.args.get('element_content')
+
+    element_data = {
+        'name':element_name,
+        'content':element_content,
+        'element_type':element_type,
+        'last_edit':dt.utcnow()
+    }
+
+    this_element.set_attributes(element_data)
+    this_element.update_in_database()
+
+    return jsonify(ComponentElement.query.filter_by(name=this_element.name).first().to_dict())
+
+
