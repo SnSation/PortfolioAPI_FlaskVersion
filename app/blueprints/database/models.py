@@ -360,6 +360,7 @@ class ComponentElement(db.Model):
     last_edit = db.Column(db.DateTime, default=dt.utcnow)
     name = db.Column(db.String(50))
     content = db.Column(db.String(500))
+    value = db.Column(db.String(500))
     element_type = db.Column(db.String(50))
 
     def __repr__(self):
@@ -372,12 +373,13 @@ class ComponentElement(db.Model):
             'created_on':self.created_on,
             'last_edit':self.last_edit,
             'content':self.content,
+            'value':self.value,
             'element_type':self.element_type
         }
         return attributes_dict
 
     def set_attributes(self, data):
-        for attribute in ['name', 'content', 'element_type', 'last_edit']:
+        for attribute in ['name', 'content', 'value', 'element_type', 'last_edit']:
             if attribute in data:
                 setattr(self, attribute, data[attribute])
 

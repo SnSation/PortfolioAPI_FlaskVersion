@@ -18,6 +18,10 @@
             <label for="element_content">Content</label>
             <textarea class="form-control" id="element_content" name="element_content" rows="4">{{ element.content }}</textarea>
         </div>
+        <div class="form-group">
+            <label for="element_content">Value</label>
+            <textarea class="form-control" id="element_value" name="element_value" rows="4">{{ element.value }}</textarea>
+        </div>
         
         <input type="hidden" id="element_id" name="element_id" value="{{ element.id }}" />
         <button type="submit" class="btn btn-primary">Edit Element</button>

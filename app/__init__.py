@@ -26,4 +26,7 @@ def create_app(config=Config):
     from app.blueprints.database import bp as database_bp
     app.register_blueprint(database_bp)
 
+    from app.blueprints.v3 import bp as v3_bp
+    app.register_blueprint(v3_bp)
+
     return app

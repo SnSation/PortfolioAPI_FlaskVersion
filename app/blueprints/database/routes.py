@@ -483,11 +483,13 @@ def edit_page_component():
 def create_component_element():
     element_name = request.args.get('element_name')
     element_content = request.args.get('element_content')
+    element_value = request.args.get('element_value')
     element_type = request.args.get('element_type')
 
     element_data = {
         'name':element_name,
         'content':element_content,
+        'value':element_value,
         'element_type':element_type
     }
 
@@ -509,18 +511,22 @@ def edit_component_element():
     this_element = ComponentElement.query.get(request.args.get('element_id'))
     element_name = this_element.name
     element_content = this_element.content
+    element_value = this_element.value
     element_type = this_element.element_type
 
     if len(request.args.get('element_name')) > 0:
         element_name = request.args.get('element_name')
     if len(request.args.get('element_content')) > 0:
         element_content = request.args.get('element_content')
+    if len(request.args.get('element_value')) > 0:
+        element_value = request.args.get('element_value')
     if len(request.args.get('element_type')) > 0:
         element_type = request.args.get('element_type')
 
     element_data = {
         'name':element_name,
         'content':element_content,
+        'value': element_value,
         'element_type':element_type,
         'last_edit':dt.utcnow()
     }
